@@ -1,0 +1,47 @@
+---
+title: "Women Volleyball Players"
+author: "Ekrem Bayar"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse) 
+library(DT)
+
+data <- read.csv("volleybox_women_players.csv")
+names(data) <- c('Id', 'Name', 'Nickname', 'Maiden name', 'Birthdate', 'Nationality', 'Position', 'Dominant hand', 'Height (cm)', 'Weight (kg)', 'Spike (cm)', 'Block (cm)', 'Url', 'Image', 'Season', 'Club', 'ClubId', 'ClubUrl', 'ClubLogo', 'LeagueCountry', 'LeagueCountryFlag', 'Agent', 'Top100', 'Top200', 'Top500', 'ActivePlayer', 'Twitter', 'Facebook', 'Instagram', 'Youtube', 'Linkedin', 'Website', 'Timeline', 'Clubs', 'Teammates', 'Tournaments', 'Matches', 'Awards', 'Ranking', 'Ranking in 2023', 'Followers', 'Player ranking', 'Coach ranking', 'Registered', 'Views', 'Last activity', 'Added by', 'User', 'Recommendations', 'Partners')
+
+data <- data %>% filter(str_detect(LeagueCountry, "Turkey")) %>% 
+  mutate(
+    Name = str_squish(str_remove_all(Name, "0")),
+    Player = paste0('<img src="',Image,'" height="60"></img>', "<a style = 'font-size:13px; position: relative; bottom: 25px; left:10px;' href='", Url,"' target='_blank'>", Name,"</a>"),
+    Club = paste0('<img src="',ClubLogo,'" height="40"></img>', "<a style = 'font-size:13px; position: relative; bottom: 14px; left:10px;' href='", ClubUrl,"' target='_blank'>", Club,"</a>", '<img style = "position: relative; bottom: 11px; left:15px;" src="',LeagueCountryFlag,'" height="15"></img>')
+  ) %>% 
+  arrange(Name) %>% 
+  select("Player", "Club", "Season", "Birthdate", "Nationality", "Position", "Dominant hand","Height (cm)", "Weight (kg)" , "Spike (cm)", "Block (cm)", Agent, "Clubs", "Teammates", "Tournaments", "Matches","Awards", 
+         "Ranking", "Player ranking", "Top100", "Top200", "Top500", "Registered", "ActivePlayer")
+
+datatable(
+  data,
+  rownames = F,
+  escape = F,
+  class = 'cell-border stripe compact nowrap',
+  plugins = "ellipsis",
+  filter = list(position = 'top', clear = TRUE, plain = F),
+  options = list(
+    searchHighlight = TRUE,
+    autoWidth = TRUE,
+    scrollX = TRUE, scrollY = 700,
+    scrollCollapse=TRUE,
+    pageLength = 50,
+    lengthMenu = c(50, 100, 150, 200, 250),
+    search = list(regex = TRUE, caseInsensitive = TRUE),
+    columnDefs = list(
+      list(className = 'dt-center', targets=2:(ncol(data)-1)),
+      list(width = '250px', targets = c(0,1))
+    )
+  )
+)
+```
+
